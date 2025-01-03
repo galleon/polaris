@@ -1,0 +1,29 @@
+[project]
+name = "polaris"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Guillaume Alleon", email = "guillaume.alleon@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "jinja==3.1.4",
+    "markupsafe==2.1.5",
+    "smolagents",
+    "torch>=2.5.1",
+]
+
+[project.scripts]
+polaris = "polaris:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
