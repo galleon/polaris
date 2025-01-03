@@ -9,4 +9,11 @@ wheels/
 # Virtual environments
 .venv
 
+# Environments
+.env
+
+# uv generated files
 .python-version
+
+# App files
+data/
