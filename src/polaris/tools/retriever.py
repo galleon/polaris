@@ -4,7 +4,6 @@ from smolagents import Tool
 from polaris.vectorstore import retriever
 
 
-
 class RetrieverTool(Tool):
     name = "retriever"
     description = "Uses semantic search to retrieve the parts of transformers documentation that could be most relevant to answer your query."
