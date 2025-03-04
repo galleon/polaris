@@ -1,26 +1,40 @@
-# from smolagents import CodeAgent, HfApiModel
+import json
 
-# from polaris.tools import retriever
+import uvicorn
+from fastapi import FastAPI, File, Form, UploadFile
+from smolagents import CodeAgent, HfApiModel
 
-from uuid import uuid5, NAMESPACE_URL
+from polaris.tools import IndexerTool, PainterTool
+
+app = FastAPI()
+model = HfApiModel("Qwen/Qwen2.5-Coder-32B-Instruct")
 
 
-def main (model_name: str) -> None:
-    # model = HfApiModel(model_name)
-    # agent = CodeAgent(tools=[], model=model)
+@app.post("/v2/chat")
+async def chat(
+    # "messages" arrives as a string in the form data; we will parse it into a list of dict
+    messages: str = Form(...),
+    file: UploadFile | None = File(None),
+) -> dict:
+    try:
+        # Parse the JSON string from the multipart form
+        messages_list = json.loads(messages)
+    except json.JSONDecodeError:
+        return {"error": "Invalid JSON in messages form field"}
 
-    # agent.run()
-    path = "src/polaris/tools/retriever.jpg"
-    print(uuid5(NAMESPACE_URL, path), NAMESPACE_URL)
-    path = "src/polaris/tools/retriever_0.jpg"
-    print(uuid5(NAMESPACE_URL, path), NAMESPACE_URL)
+    # Example: we assume messages_list is a list of dict, each dict has a "content" key
+    agent = CodeAgent(tools=[IndexerTool, PainterTool], model=model)
+
+    # Use the last message's content as the prompt
+    prompt = messages_list[-1]["content"] if messages_list else ""
+    response = agent.run(prompt)
+
+    # Optionally handle file if it’s present
+    uploaded_file_name = file.filename if file else None
+
+    return {"response": response, "uploaded_file_name": uploaded_file_name}
+
 
 if __name__ == "__main__":
-    from argparse import ArgumentParser
-
-    parser = ArgumentParser()
-    parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-Coder-32B-Instruct")
-    
-    args = parser.parse_args()
-
-    main(args.model)
+    # Launch the application with Uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8888, reload=True)

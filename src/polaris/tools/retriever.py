@@ -1,7 +1,6 @@
-from qdrant_client import QdrantClient
 from smolagents import Tool
 
-from polaris.vectorstore import retriever
+# from polaris.vectorstore import retriever
 
 
 class RetrieverTool(Tool):
@@ -17,19 +16,16 @@ class RetrieverTool(Tool):
 
     def __init__(self, docs, **kwargs):
         super().__init__(**kwargs)
-        self.retriever = BM25Retriever.from_documents(
-            docs, k=10
-        )
 
-    def forward(self, query: str) -> str:
+    def forward(self, query: str, top_k: int = 4) -> str:
         assert isinstance(query, str), "Your search query must be a string"
 
-        docs = self.retriever.invoke(
-            query,
-        )
-        return "\nRetrieved documents:\n" + "".join(
-            [
-                f"\n\n===== Document {str(i)} =====\n" + doc.page_content
-                for i, doc in enumerate(docs)
-            ]
-        )
+        # docs = self.retriever.invoke(
+        #     query,
+        # )
+        # return "\nRetrieved documents:\n" + "".join(
+        #     [
+        #         f"\n\n===== Document {str(i)} =====\n" + doc.page_content
+        #         for i, doc in enumerate(docs)
+        #     ]
+        # )

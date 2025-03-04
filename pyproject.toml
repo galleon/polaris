@@ -1,16 +1,22 @@
 [project]
 name = "polaris"
 version = "0.1.0"
-description = "Add your description here"
+description = "An Agentic RAG"
 readme = "README.md"
 authors = [
     { name = "Guillaume Alleon", email = "guillaume.alleon@gmail.com" }
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "markupsafe==2.1.5",
-    "python-dotenv>=1.0.1",
-    "qdrant-client>=1.0.1",
+    "colpali-engine>=0.2.2",
+    "diffusers>=0.32.2",
+    "fastapi[standard]>=0.115.6",
+    "lmdb>=1.6.2",
+    "pydantic-settings>=2.7.1",
+    "pypdfium2>=4.30.1",
+    "qdrant-client>=1.12.2",
+    "sentencepiece>=0.2.0",
+    "smolagents>=1.0.0",
     "torch>=2.5.1",
 ]
 
@@ -21,9 +27,37 @@ polaris = "polaris:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv.sources]
-torch = { index = "pytorch" }
+[dependency-groups]
+dev = [
+    "pre-commit>=4.0.1",
+    "pytest>=8.3.4",
+    "ruff>=0.8.5",
+]
 
-[[tool.uv.index]]
-name = "pytorch"
-url = "https://download.pytorch.org/whl/cpu"
+[tool.mypy]
+check_untyped_defs = true
+disallow_untyped_defs = true
+enable_error_code = ['ignore-without-code']
+exclude = ['docs/']
+mypy_path = '$MYPY_CONFIG_FILE_DIR/typings'
+no_implicit_optional = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ['transformers', 'transformers.*', 'torch', 'torch.*']
+ignore_missing_imports = true
+
+[tool.ruff]
+select = ["E", "F", "W", "I", "N"]
+line-length = 120
+
+[tool.ruff.per-file-ignores]
+'__init__.py' = ["F401"]
+
+[tool.uv.sources]
+colpali-engine = { path = "../colpali" }
